@@ -94,3 +94,43 @@ st.download_button(
     file_name="budget_tracker_app.zip",
     mime="application/zip"
 )
+st.subheader("➕ Add a Transaction (Fast Entry Mode)")
+
+# Better date input
+date = st.date_input("Date")
+
+# Quick Type buttons
+col1, col2 = st.columns(2)
+with col1:
+    type_income = st.button("Income")
+with col2:
+    type_expense = st.button("Expense")
+
+# Quick category buttons
+st.write("Choose Category:")
+categories = ["Food", "Rent", "Bills", "Gas", "Shopping", "Travel", "Entertainment", "Other"]
+
+selected_category = st.radio("", categories, horizontal=True)
+
+# Amount
+amount = st.number_input("Amount", min_value=0.0, format="%.2f")
+
+# Logic for buttons
+if type_income:
+    ttype = "Income"
+elif type_expense:
+    ttype = "Expense"
+else:
+    ttype = None
+
+# Save the transaction
+if ttype and amount > 0:
+    new_row = {
+        "Date": date.strftime("%Y-%m-%d"),
+        "Type": ttype,
+        "Category": selected_category,
+        "Amount": amount
+    }
+    budget_df = pd.concat([budget_df, pd.DataFrame([new_row])], ignore_index=True)
+    budget_df.to_csv("budget_data.csv", index=False)
+    st.success(f"{ttype} added!")
