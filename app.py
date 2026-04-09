@@ -69,3 +69,28 @@ if not expense_df.empty:
     st.pyplot(fig)
 else:
     st.info("No expenses to show.")
+    import zipfile
+import io
+
+def create_zip():
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w") as z:
+        z.write("app.py")
+        z.write("requirements.txt")
+        # Include CSV only if exists
+        try:
+            z.write("budget_data.csv")
+        except:
+            pass
+    buffer.seek(0)
+    return buffer
+
+st.subheader("📥 Download the Entire App")
+zip_file = create_zip()
+
+st.download_button(
+    label="Download Budget Tracker ZIP",
+    data=zip_file,
+    file_name="budget_tracker_app.zip",
+    mime="application/zip"
+)
